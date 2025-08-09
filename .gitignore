@@ -40,6 +40,21 @@ openai_config.txt
 *.wav
 *.txt
 
+# FFmpeg and audio executables (exclude from Git)
+bin/ffmpeg.exe
+bin/ffplay.exe
+bin/*.exe
+bin/*.dll
+bin/*.so
+bin/*.dylib
+
+# Large binary files
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
 # Logs
 *.log
 logs/
