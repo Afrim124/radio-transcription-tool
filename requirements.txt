@@ -1,0 +1,30 @@
+# Core dependencies for Radio Transcription Tool v3.1
+# Python 3.8+ required
+
+# GUI Framework
+tkinter  # Usually included with Python
+
+# Audio Processing
+pydub>=0.25.1
+ffmpeg-python>=0.2.0
+
+# AI and Machine Learning
+openai>=1.0.0
+keybert>=0.7.0
+sentence-transformers>=2.2.0
+
+# Image Processing
+Pillow>=9.0.0
+
+# Build Tool (for creating executable)
+pyinstaller>=5.0.0
+
+# Additional dependencies that may be needed
+requests>=2.28.0
+httpx>=0.24.0
+tiktoken>=0.4.0
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=5.0.0

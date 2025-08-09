@@ -1,7 +1,7 @@
 # PyInstaller build artifacts
 build/
 dist/
-*.spec
+# *.spec  # Commented out to allow .spec files
 
 # Python cache and compiled files
 __pycache__/
@@ -38,7 +38,7 @@ Recordings+transcriptions/
 openai_config.txt
 *.mp3
 *.wav
-*.txt
+# *.txt  # Commented out to allow requirements.txt and other important text files
 
 # FFmpeg and audio executables (exclude from Git)
 bin/ffmpeg.exe
