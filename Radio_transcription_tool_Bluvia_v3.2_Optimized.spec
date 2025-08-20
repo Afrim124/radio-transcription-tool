@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['radio_transcription_final build.py'],
+    ['radio_transcription_final_build_clean.py'],
     pathex=[],
     binaries=[],
     datas=[
@@ -65,7 +65,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='Radio_transcription_tool_Bluvia_v3.1_Optimized',
+    name='Radio_transcription_tool_Bluvia_v3.2_Optimized',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -80,3 +80,4 @@ exe = EXE(
     entitlements_file=None,
     icon='Bluvia images\\Bluebird app icon 2a.ico',  # Double backslashes for Windows
 )
+

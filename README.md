@@ -7,7 +7,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 - **Live Radio Recording**: Record streams from 40+ Dutch and Belgian radio stations
 - **Live Stream Listening**: Listen to radio streams without recording
 - **AI Transcription**: High-quality transcription using OpenAI Whisper API
-- **Smart Keyword Extraction**: Advanced phrase analysis with KeyBERT
+- **Smart Keyword Extraction**: Advanced phrase analysis with KeyBERT, prioritizing longer meaningful phrases
 - **Professional UI**: Modern Tkinter interface with Bluvia branding
 - **Organized Output**: Timestamped folders with MP3 recordings and transcriptions
 - **API Key Management**: Built-in OpenAI API key configuration
@@ -38,7 +38,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 
 4. **Run the application:**
    ```bash
-   python "radio_transcription_final build.py"
+   python radio_transcription_final_build_clean.py
    ```
 
 ## 🏗️ Building the Executable
@@ -47,9 +47,9 @@ A professional Python application for recording and transcribing Dutch and Belgi
 - PyInstaller: `pip install pyinstaller`
 
 ### Build Process
-1. **Use the optimized spec file:**
+1. **Use the optimized spec file (this is the correct one):**
    ```bash
-   pyinstaller "Radio_transcription_tool_Bluvia_v3.1_Optimized.spec"
+   pyinstaller Radio_transcription_tool_Bluvia_v3.1_Optimized.spec
    ```
 
 2. **Copy FFmpeg binaries:**
@@ -57,6 +57,10 @@ A professional Python application for recording and transcribing Dutch and Belgi
    # Copy the bin folder to the dist directory
    xcopy "bin" "dist\bin" /E /I
    ```
+
+**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec` is already configured correctly and points to the clean build file.
+
+**Important**: There is no `radio_transcription_final.spec` file in this directory. The correct spec file to use is `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec`.
 
 ### Build Results
 - **Executable size**: ~29MB (optimized)
@@ -67,7 +71,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 
 ```
 Radio_transcription_tool/
-├── radio_transcription_final build.py    # Main application
+├── radio_transcription_final_build_clean.py    # Main application
 ├── Radio_transcription_tool_Bluvia_v3.1_Optimized.spec  # PyInstaller spec
 ├── Bluvia images/                       # Application images and icons
 │   ├── Bluebird app icon 2a.ico        # Main application icon
@@ -116,6 +120,15 @@ Radio_transcription_tool/
 - **Audio**: pydub, ffmpeg
 - **AI**: openai, keybert, sentence-transformers
 - **Images**: PIL (Pillow)
+
+### Keyword Extraction Strategy
+- **Prioritizes longer phrases**: 2+ word phrases get highest priority
+- **Balanced coverage**: Ensures sufficient phrases are found while maintaining quality
+- **Frequency-based filtering**: Only includes phrases that appear multiple times (2+ occurrences)
+- **Smart filtering**: Balances meaningful content with phrase length and coverage
+- **Smart merging**: Combines phrases with reasonable overlap (40%+ of shorter phrase)
+- **Eliminates redundancy**: Only removes phrases with substantial overlap (80%+ of shorter phrase)
+- **Extended phrase range**: Supports phrases from 2-8 words for comprehensive coverage
 
 ### Build Optimization
 - **Excluded**: Heavy ML packages (torch, tensorflow, sklearn)

@@ -1,15 +1,18 @@
+# Radio Transcription Tool v3.2 - Powered by Bluvia (Improved Phrase Detection)
+# 
 # To make this script an executable, run:
-#   pyinstaller radio_transcription_final.spec
+#   pyinstaller Radio_transcription_tool_Bluvia_v3.2_Optimized.spec
 # (Make sure ffmpeg.exe and ffplay.exe are in the bin/ subdirectory)
 #
 # This will create a professional executable with:
 # - Bluvia branding and logo
-# - Professional icon (Bluebird app icon 2.ico)
+# - Professional icon (Bluebird app icon 2a.ico)
 # - Enhanced GUI with menu system
 # - Help and About dialogs
 # - All Bluvia images included
+# - Optimized build with size reduction (excludes heavy ML packages)
 #
-# The executable will be named "Radio_Transcription_Tool_Bluvia.exe"
+# The executable will be named "Radio_transcription_tool_Bluvia_v3.2_Optimized.exe"
 
 import os
 import tkinter as tk
@@ -58,7 +61,7 @@ DUTCH_STOPWORDS = {
     'zesde', 'zevende', 'achtste', 'negende', 'tiende', 'vind', 'laten', 'altijd', 'andere', 'alle', 'woord', 'gebruiken', 'moment', 'woord', 'zelf', 'zien', 'jullie', 'terug', 'kijken', 'hebt', 'weet', 'hele', 'dingen', 'helemaal', 'verschillende', 'inderdaad', 'beter', 'misschien', 'manier', 'dacht', 'uiteindelijk',
     'beetje', 'ging', 'gemaakt', 'vanuit', 'werd', 'vond', 'best', 'alleen', 'groep', 'honderd', 'iedereen', 'weken', 'groot', 'allemaal', 'gedaan', 'lang', 'zeker', 'meter', 'dagen', 'gegeven', 'leuk', 'keer', 'zaten', 'mooi', 'deden', 'willen', 'begint', 'ervoor', 'minder', 'weten', 'onder', 'steeds', 'stellen',
     'anders', 'alles', 'hadden', 'zegt', 'juist', 'oude', 'bent', 'vindt', 'volgend', 'laatste', 'minuten', 'vanaf', 'tegen', 'samen', 'laag', 'zoals', 'tevoren', 'eerder', 'tegen', 'zoals', 'steeds', 'maakt', 'vorig', 'nieuwe', 'ligt', 'jonge', 'staan', 'zich', 'ziet', 'kijk', 'week', 'eens', 'klein',
-    'volgende', 'lijkt', 'tussen', 'stuk', 'geworden', 'dus', 'zo', 'snel', 'elke', 'we', 'it', 'have', 'had', 'you', 'ja', 'we', 'ben', 'zo', 'kan', 'wel', 'nou', 'elke', 'waarom', 'denken', 'leren', 'paar', 'soms', 'kan', 'best', 'wat', 'was', 'er', 'wil', 'zeer', 'zeg', 'hem', 'zie', 'heb'
+    'volgende', 'lijkt', 'tussen', 'stuk', 'geworden', 'dus', 'zo', 'snel', 'elke', 'we', 'it', 'have', 'had', 'you', 'ja', 'we', 'ben', 'zo', 'kan', 'wel', 'nou', 'elke', 'waarom', 'denken', 'leren', 'paar', 'soms', 'kan', 'best', 'wat', 'was', 'er', 'wil', 'zeer', 'zeg', 'hem', 'zie', 'heb', 'liever', 'er',
 }
 
 # OpenAI API key will be set dynamically via popup
@@ -252,12 +255,12 @@ def remove_openai_api_key():
 def filter_phrases_robust(phrases, stopwords, max_stopword_ratio=0.8):
     """
     Filter phrases based on stopword content with robust error handling.
-    Improved to favor longer, more meaningful phrases and reduce excessive 2-word phrases.
+    Optimized to prioritize longer, more meaningful phrases and minimize 2-word phrases.
     
     Strategy:
     - Much more lenient stopword filtering to keep meaningful longer phrases
-    - Post-processing to limit 2-word phrases to maximum 40% of total
-    - Prioritizes 3+ word phrases for better content extraction
+    - Post-processing to limit 2-word phrases to maximum 15% of total
+    - Prioritizes 4+ word phrases first, then 3-word phrases, minimal 2-word phrases
     
     Args:
         phrases: List of phrase tuples (phrase, score)
@@ -294,25 +297,29 @@ def filter_phrases_robust(phrases, stopwords, max_stopword_ratio=0.8):
                 stopword_count = sum(1 for word in words_in_phrase if word in stopwords)
                 total_words = len(words_in_phrase)
                 
-                # MODERATE filtering to eliminate meaningless phrases while keeping meaningful ones
+                # MORE LENIENT filtering to capture more meaningful phrases
                 if total_words >= 6:
-                    # Allow max 2 stopwords for very long phrases
-                    max_allowed = 2.0 / total_words
+                    # Allow max 4 stopwords for very long phrases
+                    max_allowed = 4.0 / total_words
                 elif total_words == 5:
-                    # Allow max 2 stopwords for 5-word phrases
-                    max_allowed = 2.0 / 5.0
+                    # Allow max 3 stopwords for 5-word phrases
+                    max_allowed = 3.0 / 5.0
                 elif total_words == 4:
-                    # Allow max 2 stopwords for 4-word phrases
-                    max_allowed = 2.0 / 4.0
+                    # Allow max 3 stopwords for 4-word phrases (more lenient)
+                    max_allowed = 3.0 / 4.0
                 elif total_words == 3:
-                    # Allow max 1 stopword for 3-word phrases
-                    max_allowed = 1.0 / 3.0
+                    # Allow max 2 stopwords for 3-word phrases
+                    max_allowed = 2.0 / 3.0
                 else:
                     # Allow max 1 stopword for 2-word phrases (but ensure non-stopword is meaningful)
                     max_allowed = 1.0 / 2.0
                 
-                # Apply the strict filtering
+                # Apply the balanced filtering
                 if total_words > 0 and stopword_count / total_words <= max_allowed:
+                    # Additional check: ensure phrase is not just stopwords
+                    if stopword_count == total_words:
+                        continue  # Skip phrases that are only stopwords
+                    
                     # Additional check: for 2-word phrases, ensure at least one word is meaningful
                     if total_words == 2 and stopword_count == 1:
                         # Check if the non-stopword word is substantial (not just 1-2 characters)
@@ -329,28 +336,237 @@ def filter_phrases_robust(phrases, stopwords, max_stopword_ratio=0.8):
         # If filtering fails completely, return original phrases
         return [kw[0] for kw in phrases if isinstance(kw, (list, tuple)) and len(kw) > 0 and kw[0] is not None]
     
-    # Post-process to reduce excessive 2-word phrases and prioritize longer ones
+    # Post-process to prioritize longer phrases and minimize 2-word phrases
     try:
         if len(filtered_phrases) > 20:  # Only if we have many phrases
             # Count phrase lengths
             phrase_lengths = [len(phrase.split()) for phrase in filtered_phrases]
             
-            # If we have too many 2-word phrases, filter some out
-            two_word_count = phrase_lengths.count(2)
-            if two_word_count > len(filtered_phrases) * 0.4:  # Reduced from 60% to 40%
-                # Keep only the best 2-word phrases and prioritize longer ones
-                long_phrases = [p for p in filtered_phrases if len(p.split()) >= 3]
-                two_word_phrases = [p for p in filtered_phrases if len(p.split()) == 2]
-                
-                # Limit 2-word phrases to maximum 30% of total (reduced from 40%)
-                max_two_word = min(len(filtered_phrases) * 0.3, len(two_word_phrases))
-                if len(two_word_phrases) > max_two_word:
-                    two_word_phrases = two_word_phrases[:int(max_two_word)]
-                
-                # Combine with priority to longer phrases
-                filtered_phrases = long_phrases + two_word_phrases
+            # Separate phrases by length for better prioritization
+            long_phrases = [p for p in filtered_phrases if len(p.split()) >= 4]  # 4+ word phrases
+            medium_phrases = [p for p in filtered_phrases if len(p.split()) == 3]  # 3-word phrases
+            two_word_phrases = [p for p in filtered_phrases if len(p.split()) == 2]  # 2-word phrases
+            
+            # Prioritize longer phrases: 4+ words get highest priority, then 3 words, reasonable 2 words
+            # Limit 2-word phrases to maximum 35% of total (more generous for better coverage)
+            max_two_word = min(len(filtered_phrases) * 0.35, len(two_word_phrases))
+            if len(two_word_phrases) > max_two_word:
+                two_word_phrases = two_word_phrases[:int(max_two_word)]
+            
+            # Combine with priority to longer phrases: 4+ words first, then 3 words, then limited 2 words
+            filtered_phrases = long_phrases + medium_phrases + two_word_phrases
+            
+            # Merge overlapping phrases into longer, more complete phrases
+            filtered_phrases = merge_overlapping_phrases(filtered_phrases)
+            
+            # Remove true sub-phrases that are completely contained within longer phrases
+            filtered_phrases = remove_true_subphrases(filtered_phrases)
     except Exception:
         pass  # If post-processing fails, return original filtered phrases
+    
+    return filtered_phrases
+
+# Function to merge overlapping phrases into longer, more complete phrases
+def merge_overlapping_phrases(phrases):
+    """
+    Merge phrases that have overlapping words into longer, more complete phrases.
+    This creates more meaningful content by combining related phrases.
+    Phrases that cannot be merged are kept as-is.
+    
+    Args:
+        phrases: List of phrases to merge
+    
+    Returns:
+        List of merged phrases and unique phrases that couldn't be merged
+    """
+    if not phrases or len(phrases) <= 1:
+        return phrases
+    
+    # Sort phrases by length (longest first) for better merging
+    sorted_phrases = sorted(phrases, key=lambda x: len(x.split()), reverse=True)
+    
+    merged_phrases = []
+    used_indices = set()
+    
+    for i, phrase in enumerate(sorted_phrases):
+        if i in used_indices:
+            continue
+            
+        phrase_lower = phrase.lower().strip()
+        phrase_words = phrase_lower.split()
+        best_merge = phrase
+        best_merge_length = len(phrase_words)
+        merged_with = []
+        
+        # Look for phrases to merge with
+        for j, other_phrase in enumerate(sorted_phrases):
+            if i == j or j in used_indices:
+                continue
+                
+            other_lower = other_phrase.lower().strip()
+            other_words = other_lower.split()
+            
+            # Check for overlapping words with more lenient requirements
+            # Allow more merging to find more phrases
+            min_overlap = 2 if min(len(phrase_words), len(other_words)) <= 4 else 3
+            
+            if len(phrase_words) >= 3 and len(other_words) >= 3:
+                # Find common word sequences
+                common_sequence = find_common_sequence(phrase_words, other_words)
+                
+                if len(common_sequence) >= min_overlap:  # More lenient overlap requirement
+                    # Additional check: the overlap should be reasonable relative to phrase length
+                    overlap_ratio = len(common_sequence) / min(len(phrase_words), len(other_words))
+                    
+                    # Allow merging with more lenient overlap (at least 40% of the shorter phrase)
+                    if overlap_ratio >= 0.4:
+                        # Try to merge the phrases
+                        merged = merge_two_phrases(phrase, other_phrase, common_sequence)
+                        if merged and len(merged.split()) > best_merge_length:
+                            # Allow merging if the result is at least 1 word longer
+                            if len(merged.split()) > best_merge_length + 1:
+                                best_merge = merged
+                                best_merge_length = len(merged.split())
+                                merged_with.append(j)
+        
+        # Add the best merged phrase and mark used phrases
+        merged_phrases.append(best_merge)
+        used_indices.add(i)
+        used_indices.update(merged_with)
+    
+    # Also add any phrases that weren't used (unique phrases with no overlaps)
+    # But be more selective - only add phrases that are truly unique
+    for i, phrase in enumerate(sorted_phrases):
+        if i not in used_indices:
+            # Check if this phrase is truly unique or just a failed merge attempt
+            phrase_words = phrase.lower().strip().split()
+            
+            # Add more phrases to ensure better coverage
+            if len(phrase_words) >= 3:
+                merged_phrases.append(phrase)
+            elif len(phrase_words) >= 2:
+                # For 2-word phrases, check if they're meaningful
+                # Look for meaningful content (not just common words)
+                common_words = {'de', 'het', 'een', 'van', 'in', 'op', 'met', 'als', 'voor', 'aan', 'er', 'door', 'om', 'tot', 'ook', 'maar', 'uit', 'bij', 'over', 'nog', 'naar', 'dan', 'of', 'je', 'ik', 'ze', 'zij', 'hij', 'wij', 'jij', 'u', 'hun', 'ons', 'mijn', 'jouw', 'zijn', 'haar', 'hun', 'dit', 'dat', 'deze', 'die'}
+                meaningful_words = [w for w in phrase_words if w not in common_words and len(w) >= 3]
+                
+                # Add if it has at least 1 meaningful word
+                if len(meaningful_words) >= 1:
+                    merged_phrases.append(phrase)
+    
+    return merged_phrases
+
+def find_common_sequence(words1, words2):
+    """Find the longest common continuous sequence of words between two lists."""
+    if not words1 or not words2:
+        return []
+    
+    # Convert to lowercase for comparison
+    words1_lower = [w.lower() for w in words1]
+    words2_lower = [w.lower() for w in words2]
+    
+    max_length = 0
+    best_sequence = []
+    
+    # Check all possible starting positions
+    for i in range(len(words1_lower)):
+        for j in range(len(words2_lower)):
+            if words1_lower[i] == words2_lower[j]:
+                # Found a match, check how long the sequence is
+                length = 0
+                while (i + length < len(words1_lower) and 
+                       j + length < len(words2_lower) and 
+                       words1_lower[i + length] == words2_lower[j + length]):
+                    length += 1
+                
+                if length > max_length:
+                    max_length = length
+                    best_sequence = words1_lower[i:i + length]
+    
+    return best_sequence
+
+def merge_two_phrases(phrase1, phrase2, common_sequence):
+    """Merge two phrases based on their common word sequence."""
+    if not common_sequence:
+        return None
+    
+    # Find the position of the common sequence in both phrases
+    phrase1_lower = phrase1.lower()
+    phrase2_lower = phrase2.lower()
+    common_text = ' ' + ' '.join(common_sequence) + ' '
+    
+    # Find start and end positions of common sequence in both phrases
+    start1 = phrase1_lower.find(common_text)
+    start2 = phrase2_lower.find(common_text)
+    
+    if start1 == -1 or start2 == -1:
+        return None
+    
+    end1 = start1 + len(common_text) - 1  # -1 to remove leading space
+    end2 = start2 + len(common_text) - 1
+    
+    # Extract unique parts
+    before1 = phrase1[:start1].strip()
+    after1 = phrase1[end1:].strip()
+    before2 = phrase2[:start2].strip()
+    after2 = phrase2[end2:].strip()
+    
+    # Build merged phrase: before1 + common + after1 + after2 (or before2 + common + after1)
+    # Choose the combination that makes most sense
+    if len(before1) > 0 and len(after2) > 0:
+        merged = f"{before1} {common_text.strip()} {after2}".strip()
+    elif len(before2) > 0 and len(after1) > 0:
+        merged = f"{before2} {common_text.strip()} {after1}".strip()
+    elif len(before1) > 0:
+        merged = f"{before1} {common_text.strip()} {after1}".strip()
+    elif len(before2) > 0:
+        merged = f"{before2} {common_text.strip()} {after2}".strip()
+    else:
+        merged = common_text.strip()
+    
+    return merged
+
+# Function to remove true sub-phrases that are completely contained within longer phrases
+def remove_true_subphrases(phrases):
+    """
+    Remove shorter phrases that are completely contained within longer phrases.
+    This eliminates redundancy by keeping only the longest, most complete phrases.
+    
+    Args:
+        phrases: List of phrases to filter
+    
+    Returns:
+        List of phrases with true sub-phrases removed
+    """
+    if not phrases or len(phrases) <= 1:
+        return phrases
+    
+    # Sort phrases by length (longest first)
+    sorted_phrases = sorted(phrases, key=lambda x: len(x.split()), reverse=True)
+    
+    filtered_phrases = []
+    
+    for phrase in sorted_phrases:
+        phrase_lower = phrase.lower().strip()
+        phrase_words = phrase_lower.split()
+        
+        # Check if this phrase is completely contained within any existing phrase
+        is_subphrase = False
+        
+        for existing_phrase in filtered_phrases:
+            existing_lower = existing_phrase.lower().strip()
+            
+            # Remove if the current phrase is a complete continuous sub-sequence of a longer phrase
+            if len(phrase_words) < len(existing_lower.split()):
+                phrase_with_spaces = ' ' + phrase_lower + ' '
+                existing_with_spaces = ' ' + existing_lower + ' '
+                if phrase_with_spaces in existing_with_spaces:
+                    is_subphrase = True
+                    break
+        
+        # Only add if it's not a true subphrase
+        if not is_subphrase:
+            filtered_phrases.append(phrase)
     
     return filtered_phrases
 
@@ -510,7 +726,7 @@ def record_stream(stream_url, output_file, stop_event):
 class RadioRecorderApp:
     def __init__(self, master):
         self.master = master
-        master.title("Radio Transcription Tool v3.0 - Powered by Bluvia")
+        master.title("Radio Transcription Tool v3.2 - Powered by Bluvia (Improved Phrase Detection)")
         
         # Set window icon if available
         try:
@@ -774,7 +990,7 @@ class RadioRecorderApp:
             pass
         
         # Title
-        title_label = ttk.Label(main_frame, text="Radio Transcription Tool v3.0", 
+        title_label = ttk.Label(main_frame, text="Radio Transcription Tool v3.2", 
                               font=('Arial', 16, 'bold'), foreground='#2E86AB')
         title_label.pack(pady=(0, 15))
         
@@ -969,7 +1185,7 @@ For technical support or questions, visit the Bluvia website."""
             return
         
         # Update status in main thread
-        self.master.after(0, lambda: self.status_label.config(text="Transcribing audio..."))
+        self.master.after(0, lambda: self.status_label.config(text="Transcribing audio with improved phrase detection..."))
         
         # Override subprocess globally for this entire transcription process
         import subprocess
@@ -988,8 +1204,8 @@ For technical support or questions, visit the Bluvia website."""
         subprocess.Popen = silent_popen
         
         try:
-            # Split audio into 10-minute chunks (600000 ms)
-            chunk_length_ms = 10 * 60 * 1000
+            # Split audio into 5-minute chunks (300000 ms) for better transcription quality
+            chunk_length_ms = 5 * 60 * 1000
             
             # Load audio with error handling
             try:
@@ -1042,6 +1258,8 @@ For technical support or questions, visit the Bluvia website."""
                                     file=f,
                                     response_format="verbose_json",
                                     language="nl",
+                                    prompt="Dit is een Nederlandse radio-uitzending met nieuws, discussies en gesprekken. De transcriptie moet alle belangrijke woorden en zinnen bevatten.",
+                                    temperature=0.0,  # More consistent transcription
                                 )
                             break  # Success, exit retry loop
                         except Exception as api_error:
@@ -1115,6 +1333,12 @@ For technical support or questions, visit the Bluvia website."""
                 self.master.after(0, lambda: self.status_label.config(text="No speech detected in recording"))
                 return
             
+            # Debug: Show transcript length for troubleshooting
+            transcript_length = len(transcript.split())
+            print(f"DEBUG: Transcript contains {transcript_length} words")
+            if transcript_length < 100:
+                print(f"DEBUG: Warning - transcript seems very short for a 1-hour recording")
+            
             if keybert_available:
                 try:
                     # Check if transcript is too short for KeyBERT
@@ -1124,15 +1348,114 @@ For technical support or questions, visit the Bluvia website."""
                         # Use global stopwords for KeyBERT filtering
                         stopwords = DUTCH_STOPWORDS
                         
-                        # Try KeyBERT for phrases first - without stopwords to get more results
+                        # Try KeyBERT for phrases first - balanced approach with focus on longer phrases
                         kw_model = KeyBERT()
-                        keywords_phrases = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(2,5), top_n=30)
+                        keywords_phrases = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(2,8), top_n=60)
+                        
+                        # Also get medium-length phrases (2-4 words) as backup for better coverage
+                        keywords_medium = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(2,4), top_n=50)
                         
                         # Try KeyBERT for single words separately - without stopwords to get more results
                         keywords_words = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(1,1), top_n=20)
                         
 
                         
+                        # Apply frequency filtering to KeyBERT results - only keep phrases that appear multiple times
+                        from collections import Counter
+                        transcript_words = transcript.lower().split()
+                        
+                        # ESSENTIAL DEBUG: Check if variables are properly initialized
+
+                        
+                        # Count phrase occurrences in transcript - FLEXIBLE VERSION
+                        def count_phrase_occurrences(phrase, transcript_words):
+                            # Normalize both phrase and transcript for better matching
+                            phrase_normalized = ' '.join(phrase.lower().split())
+                            transcript_text = ' '.join(transcript_words).lower()
+                            
+
+                            
+                            # Count exact matches first
+                            count = transcript_text.count(phrase_normalized)
+                            
+                            # If no exact matches, try flexible word-by-word matching
+                            if count == 0:
+                                phrase_words = phrase.lower().split()
+                                # Look for sequences of words that match (allowing for minor variations)
+                                for i in range(len(transcript_words) - len(phrase_words) + 1):
+                                    window = transcript_words[i:i+len(phrase_words)]
+                                    window_text = ' '.join(window).lower()
+                                    
+                                    # Exact match
+                                    if window_text == phrase_normalized:
+                                        count += 1
+        
+                                    # Flexible match: check if most words match (at least 80% of words for longer phrases)
+                                    elif len(phrase_words) >= 4:
+                                        matching_words = sum(1 for j, word in enumerate(phrase_words) 
+                                                           if j < len(window) and word == window[j])
+                                        if matching_words >= len(phrase_words) * 0.8:
+                                            count += 1
+    
+                            
+
+                            return count
+                        
+                        # Filter phrases by score first, then frequency (MORE LENIENT approach for better coverage)
+                        filtered_keywords_phrases = []
+                        for phrase, score in keywords_phrases:
+                            occurrences = count_phrase_occurrences(phrase, transcript_words)
+                            # More lenient filtering to capture more phrases
+                            # High scores (0.35+) with 1+ occurrence
+                            # Medium scores (0.2+) with 1+ occurrence  
+                            # Lower scores with 1+ occurrence (more lenient)
+                            if (score > 0.35 and occurrences >= 1) or (score > 0.2 and occurrences >= 1) or (score > 0.1 and occurrences >= 1):
+                                filtered_keywords_phrases.append((phrase, score))
+
+                        
+                        filtered_keywords_medium = []
+                        for phrase, score in keywords_medium:
+                            occurrences = count_phrase_occurrences(phrase, transcript_words)
+                            # More lenient approach for medium phrases: all must occur at least once
+                            if (score > 0.3 and occurrences >= 1) or (score > 0.15 and occurrences >= 1) or (score > 0.08 and occurrences >= 1):
+                                filtered_keywords_medium.append((phrase, score))
+
+                        
+
+                        
+                        # FALLBACK STRATEGY: If frequency filtering still removes too many phrases, use KeyBERT results with more lenient score filtering
+                        if len(filtered_keywords_phrases) < 8 or len(filtered_keywords_medium) < 8:  # More lenient threshold
+
+                            # More lenient score filtering to preserve more results
+                            filtered_keywords_phrases = [(phrase, score) for phrase, score in keywords_phrases if score > 0.08]
+                            filtered_keywords_medium = [(phrase, score) for phrase, score in keywords_medium if score > 0.05]
+
+                            
+                            # Extract phrases for stopword filtering
+                            filtered_keywords_phrases_text = [phrase for phrase, score in filtered_keywords_phrases]
+                            filtered_keywords_medium_text = [phrase for phrase, score in filtered_keywords_medium]
+                            
+                            # Apply very lenient stopword filtering to preserve more results
+                            basic_stopwords = {'de', 'het', 'een', 'en', 'van', 'in', 'te', 'dat', 'die', 'is', 'op', 'met', 'als', 'voor', 'aan', 'er', 'door', 'om', 'tot', 'ook', 'maar', 'uit', 'bij', 'over', 'nog', 'naar', 'dan', 'of', 'je', 'ik', 'ze', 'zij', 'hij', 'wij', 'jij', 'u', 'hun', 'ons', 'mijn', 'jouw', 'zijn', 'haar', 'hun', 'dit', 'dat', 'deze', 'die'}
+                            
+                            try:
+                                filtered_phrases = filter_phrases_robust(filtered_keywords_phrases_text, basic_stopwords)
+                                filtered_medium = filter_phrases_robust(filtered_keywords_medium_text, basic_stopwords)
+        
+                            except Exception as filter_error:
+
+                                # If filtering fails, accept all results
+                                filtered_phrases = filtered_keywords_phrases_text
+                                filtered_medium = filtered_keywords_medium_text
+                            
+                            # If still too few, accept all
+                            if len(filtered_phrases) < 15:
+
+                                filtered_phrases = filtered_keywords_phrases_text
+                            
+                            if len(filtered_medium) < 15:
+
+                                filtered_medium = filtered_keywords_medium_text
                         
                         # Combine results with smart filtering
                         keypoints = []
@@ -1142,8 +1465,63 @@ For technical support or questions, visit the Bluvia website."""
                         
                         filtered_words = filter_words_robust(keywords_words, common_stopwords)
                         
-                        # Filter phrases to remove those with too many stopwords
-                        filtered_phrases = filter_phrases_robust(keywords_phrases, common_stopwords)
+                        # Filter phrases to remove those with too many stopwords - much more lenient for KeyBERT results
+                        # First extract just the phrases from KeyBERT results (remove scores)
+                        filtered_keywords_phrases_text = [phrase for phrase, score in filtered_keywords_phrases]
+                        filtered_keywords_medium_text = [phrase for phrase, score in filtered_keywords_medium]
+                        
+                        # Use very basic stopwords only for KeyBERT results to preserve more phrases
+                        basic_stopwords = {'de', 'het', 'een', 'en', 'van', 'in', 'te', 'dat', 'die', 'is', 'op', 'met', 'als', 'voor', 'aan', 'er', 'door', 'om', 'tot', 'ook', 'maar', 'uit', 'bij', 'over', 'nog', 'naar', 'dan', 'of', 'je', 'ik', 'ze', 'zij', 'hij', 'wij', 'jij', 'u', 'hun', 'ons', 'mijn', 'jouw', 'zijn', 'haar', 'hun', 'dit', 'dat', 'deze', 'die'}
+                        
+                        try:
+                            filtered_phrases = filter_phrases_robust(filtered_keywords_phrases_text, basic_stopwords)
+                            filtered_medium = filter_phrases_robust(filtered_keywords_medium_text, basic_stopwords)
+    
+                        except Exception as filter_error:
+
+                            # If filtering fails, accept all results
+                            filtered_phrases = filtered_keywords_phrases_text
+                            filtered_medium = filtered_keywords_medium_text
+
+                        
+                        # If still too few phrases, use score-based filtering instead of accepting all
+                        if len(filtered_phrases) < 5:
+
+                            # Filter by score to get better quality phrases
+                            high_score_phrases = [phrase for phrase, score in filtered_keywords_phrases if score > 0.25]
+                            filtered_phrases = high_score_phrases[:20]  # Limit to top 20 high-score phrases
+
+                        
+                        if len(filtered_medium) < 5:
+
+                            # Filter by score to get better quality medium phrases
+                            high_score_medium = [phrase for phrase, score in filtered_keywords_medium if score > 0.2]
+                            filtered_medium = high_score_medium[:15]  # Limit to top 15 high-score medium phrases
+
+                        
+                        # If filtering removes too many phrases, be more lenient but still require at least 1 occurrence
+                        if len(filtered_phrases) < 8:  # More lenient threshold
+                            # Re-extract with higher top_n to get more candidates
+                            keywords_phrases_extended = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(2,8), top_n=100)
+                            for phrase, score in keywords_phrases_extended:
+                                if count_phrase_occurrences(phrase, transcript_words) >= 1:  # More lenient: 1+ occurrence
+                                    filtered_keywords_phrases.append((phrase, score))
+                                    if len(filtered_keywords_phrases) >= 25:  # Increased limit
+                                        break
+                            # Re-filter with the extended results - extract phrases first
+                            filtered_keywords_phrases_text = [phrase for phrase, score in filtered_keywords_phrases]
+                            filtered_phrases = filter_phrases_robust(filtered_keywords_phrases_text, common_stopwords)
+                        
+                        if len(filtered_medium) < 8:  # More lenient threshold
+                            keywords_medium_extended = kw_model.extract_keywords(transcript, keyphrase_ngram_range=(2,8), top_n=80)
+                            for phrase, score in keywords_medium_extended:
+                                if count_phrase_occurrences(phrase, transcript_words) >= 1:  # More lenient: 1+ occurrence
+                                    filtered_keywords_medium.append((phrase, score))
+                                    if len(filtered_keywords_medium) >= 20:  # Increased limit
+                                        break
+                            # Re-filter with the extended results - extract phrases first
+                            filtered_keywords_medium_text = [phrase for phrase, score in filtered_keywords_medium]
+                            filtered_medium = filter_phrases_robust(filtered_keywords_medium_text, common_stopwords)
                         
                         # If filtering removes too many words, be less strict
                         if len(filtered_words) < 5 and len(keywords_words) > 0:
@@ -1151,19 +1529,72 @@ For technical support or questions, visit the Bluvia website."""
                             basic_stopwords = {'de', 'het', 'een', 'en', 'van', 'in', 'te', 'dat', 'die', 'is', 'op', 'met', 'als', 'voor', 'aan', 'er', 'door', 'om', 'tot', 'ook', 'maar', 'uit', 'bij', 'over', 'nog', 'naar', 'dan', 'of', 'je', 'ik', 'ze', 'zij', 'hij', 'wij', 'jij', 'u', 'hun', 'ons', 'mijn', 'jouw', 'zijn', 'haar', 'hun', 'dit', 'dat', 'deze', 'die'}
                             filtered_words = filter_words_robust(keywords_words, basic_stopwords)
                         
+                        # Extract just the phrases from the filtered results (handle strings or (phrase, score) tuples)
+                        if isinstance(filtered_phrases, list) and filtered_phrases and isinstance(filtered_phrases[0], (list, tuple)):
+                            filtered_phrases_text = [phrase for phrase, score in filtered_phrases]
+                        else:
+                            filtered_phrases_text = filtered_phrases if isinstance(filtered_phrases, list) else []
+
+                        if isinstance(filtered_medium, list) and filtered_medium and isinstance(filtered_medium[0], (list, tuple)):
+                            filtered_medium_text = [phrase for phrase, score in filtered_medium]
+                        else:
+                            filtered_medium_text = filtered_medium if isinstance(filtered_medium, list) else []
+                        
                         keypoints.extend(filtered_words)
-                        keypoints.extend(filtered_phrases)
+                        keypoints.extend(filtered_phrases_text)  # Long phrases first (4-6 words)
+                        keypoints.extend(filtered_medium_text)   # Medium phrases second (3-4 words)
+                        
+                        # Merge overlapping phrases from KeyBERT results
+                        if len(keypoints) > 1:
+                            # Separate words and phrases for merging
+                            words_only = [kp for kp in keypoints if ' ' not in kp]
+                            phrases_only = [kp for kp in keypoints if ' ' in kp]
+                            
+                            # Merge overlapping phrases into longer ones
+                            merged_phrases_only = merge_overlapping_phrases(phrases_only)
+                            
+                            # Recombine with words first, then merged phrases
+                            keypoints = words_only + merged_phrases_only
+                        
+                        # Remove true sub-phrases from the combined results
+                        if len(keypoints) > 1:
+                            # Separate words and phrases for filtering
+                            words_only_final = [kp for kp in keypoints if ' ' not in kp]
+                            phrases_only_final = [kp for kp in keypoints if ' ' in kp]
+                            
+                            # Remove true sub-phrases from phrases
+                            filtered_phrases_final = remove_true_subphrases(phrases_only_final)
+                            
+                            # Recombine
+                            keypoints = words_only_final + filtered_phrases_final
                         
                         # If KeyBERT still finds nothing, force fallback
                         if not keypoints:
                             keybert_available = False
                         
+                        # Debug: Show what we found
+                        print(f"DEBUG: KeyBERT found {len(filtered_keywords_phrases)} long phrases and {len(filtered_keywords_medium)} medium phrases")
+                        print(f"DEBUG: After filtering: {len(filtered_phrases)} long phrases and {len(filtered_medium)} medium phrases")
+                        
+                        # Show some example phrases that were kept
+                        if filtered_phrases:
+                            print(f"DEBUG: Example long phrases: {filtered_phrases[:3]}")
+                        if filtered_medium:
+                            print(f"DEBUG: Example medium phrases: {filtered_medium[:3]}")
+                        
                 except Exception as kb_error:
+                    
                     keybert_available = False  # Force fallback
-            else:
+            
+            # Only use fallback if KeyBERT failed or found too few results
+            if not keybert_available or (keybert_available and len(keypoints) < 8):  # Increased threshold to avoid unnecessary fallback
+                
                 # Fallback: most frequent words and phrases with STRICT filtering
                 from collections import Counter
                 import re
+                
+                # Reset keypoints for fallback method
+                keypoints = []
                 
                 # Extract single words
                 words = re.findall(r'\w+', transcript.lower())
@@ -1172,71 +1603,97 @@ For technical support or questions, visit the Bluvia website."""
                 stopwords = DUTCH_STOPWORDS
                 filtered_words = [w for w in words if w not in stopwords and len(w) > 3]
                 
-                # Extract phrases (2-3 word combinations) with STRICT filtering - max 1 stopword for 2-3 word phrases
+                # Debug: Show word extraction results
+                print(f"DEBUG: Fallback method found {len(filtered_words)} significant words from {len(words)} total words")
+                
+                # Extract phrases with priority to longer combinations and minimal 2-word phrases
                 sentences = re.split(r'[.!?]+', transcript.lower())
                 phrases = []
                 for sentence in sentences:
                     sentence_words = re.findall(r'\w+', sentence.strip())
-                    # Generate 2-word phrases
-                    for i in range(len(sentence_words) - 1):
-                        word1, word2 = sentence_words[i], sentence_words[i+1]
-                                            # Count stopwords in phrase
-                    stopword_count = sum(1 for word in [word1, word2] if word in stopwords)
-                    # Allow max 1 stopword for 2-word phrases (moderate)
-                    if stopword_count <= 1:
-                        # Additional check: ensure non-stopword word is substantial
-                        non_stopword = word1 if word1 not in stopwords else word2
-                        if len(non_stopword) >= 3:  # Only if non-stopword is meaningful
-                            phrase = f"{word1} {word2}"
-                            phrases.append(phrase)
+                    
+                    # Generate 5-word phrases first (highest priority)
+                    for i in range(len(sentence_words) - 4):
+                        word1, word2, word3, word4, word5 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3], sentence_words[i+4]
+                        stopword_count = sum(1 for word in [word1, word2, word3, word4, word5] if word in stopwords)
+                        if stopword_count <= 2:  # Allow max 2 stopwords for 5-word phrases
+                            non_stopwords = [w for w in [word1, word2, word3, word4, word5] if w not in stopwords]
+                            if len(non_stopwords) >= 3 and all(len(w) >= 3 for w in non_stopwords):
+                                phrase = f"{word1} {word2} {word3} {word4} {word5}"
+                                phrases.append(phrase)
+                    
+                    # Generate 4-word phrases (high priority) - MORE LENIENT
+                    for i in range(len(sentence_words) - 3):
+                        word1, word2, word3, word4 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3]
+                        stopword_count = sum(1 for word in [word1, word2, word3, word4] if word in stopwords)
+                        if stopword_count <= 3:  # Allow max 3 stopwords for 4-word phrases (more lenient)
+                            non_stopwords = [w for w in [word1, word2, word3, word4] if w not in stopwords]
+                            if len(non_stopwords) >= 1 and all(len(w) >= 2 for w in non_stopwords):  # More lenient length requirement
+                                phrase = f"{word1} {word2} {word3} {word4}"
+                                phrases.append(phrase)
+                    
+                    # Generate 3-word phrases (medium priority) - MORE LENIENT
+                    for i in range(len(sentence_words) - 2):
+                        word1, word2, word3 = sentence_words[i], sentence_words[i+1], sentence_words[i+2]
+                        stopword_count = sum(1 for word in [word1, word2, word3] if word in stopwords)
+                        if stopword_count <= 2:  # Allow max 2 stopwords for 3-word phrases (more lenient)
+                            non_stopwords = [w for w in [word1, word2, word3] if w not in stopwords]
+                            if len(non_stopwords) >= 1 and all(len(w) >= 2 for w in non_stopwords):  # More lenient length requirement
+                                phrase = f"{word1} {word2} {word3}"
+                                phrases.append(phrase)
+                    
+                    # Generate 2-word phrases last (lowest priority, but more generous)
+                    if len(phrases) < 30:  # Allow more 2-word phrases to ensure coverage
+                        for i in range(len(sentence_words) - 1):
+                            word1, word2 = sentence_words[i], sentence_words[i+1]
+                            stopword_count = sum(1 for word in [word1, word2] if word in stopwords)
+                            if stopword_count <= 1:  # Allow max 1 stopword for 2-word phrases
+                                non_stopword = word1 if word1 not in stopwords else word2
+                                if len(non_stopword) >= 3:  # Only if non-stopword is meaningful
+                                    phrase = f"{word1} {word2}"
+                                    phrases.append(phrase)
+                                    if len(phrases) >= 55:  # Increased limit for better coverage
+                                        break
                 
-                # Generate 3-word phrases
-                for i in range(len(sentence_words) - 2):
-                    word1, word2, word3 = sentence_words[i], sentence_words[i+1], sentence_words[i+2]
-                    # Count stopwords in phrase
-                    stopword_count = sum(1 for word in [word1, word2, word3] if word in stopwords)
-                    # Allow max 1 stopword for 3-word phrases (strict)
-                    if stopword_count <= 1:
-                        # Additional check: ensure at least 2 non-stopwords are substantial
-                        non_stopwords = [w for w in [word1, word2, word3] if w not in stopwords]
-                        if len(non_stopwords) >= 2 and all(len(w) >= 3 for w in non_stopwords):
-                            phrase = f"{word1} {word2} {word3}"
-                            phrases.append(phrase)
                 
-                # Generate 4-word phrases
-                for i in range(len(sentence_words) - 3):
-                    word1, word2, word3, word4 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3]
-                    # Count stopwords in phrase
-                    stopword_count = sum(1 for word in [word1, word2, word3, word4] if word in stopwords)
-                    # Allow max 2 stopwords for 4-word phrases (moderate)
-                    if stopword_count <= 2:
-                        # Additional check: ensure at least 2 non-stopwords are substantial
-                        non_stopwords = [w for w in [word1, word2, word3, word4] if w not in stopwords]
-                        if len(non_stopwords) >= 2 and all(len(w) >= 3 for w in non_stopwords):
-                            phrase = f"{word1} {word2} {word3} {word4}"
-                            phrases.append(phrase)
-                
-                # Generate 5-word phrases
-                for i in range(len(sentence_words) - 4):
-                    word1, word2, word3, word4, word5 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3], sentence_words[i+4]
-                    # Count stopwords in phrase
-                    stopword_count = sum(1 for word in [word1, word2, word3, word4, word5] if word in stopwords)
-                    # Allow max 2 stopwords for 5-word phrases (moderate)
-                    if stopword_count <= 2:
-                        # Additional check: ensure at least 3 non-stopwords are substantial
-                        non_stopwords = [w for w in [word1, word2, word3, word4, word5] if w not in stopwords]
-                        if len(non_stopwords) >= 3 and all(len(w) >= 3 for w in non_stopwords):
-                            phrase = f"{word1} {word2} {word3} {word4} {word5}"
-                            phrases.append(phrase)
                 
                 # Combine single words and phrases, get most common
                 all_terms = filtered_words + phrases
+                
+                # Debug: Show phrase extraction results
+                print(f"DEBUG: Fallback method found {len(phrases)} phrases total")
+                if phrases:
+                    phrase_lengths = [len(p.split()) for p in phrases]
+                    print(f"DEBUG: Phrase lengths: 2w={phrase_lengths.count(2)}, 3w={phrase_lengths.count(3)}, 4w={phrase_lengths.count(4)}, 5w={phrase_lengths.count(5)}")
+                
+                # Merge overlapping phrases before counting
+                if len(all_terms) > 1:
+                    words_only = [term for term in all_terms if ' ' not in term]
+                    phrases_only = [term for term in all_terms if ' ' in term]
+                    
+                    # Merge overlapping phrases into longer ones
+                    merged_phrases_only = merge_overlapping_phrases(phrases_only)
+                    
+                    # Recombine
+                    all_terms = words_only + merged_phrases_only
+                
+                # Remove true sub-phrases before counting
+                if len(all_terms) > 1:
+                    words_only_final = [term for term in all_terms if ' ' not in term]
+                    phrases_only_final = [term for term in all_terms if ' ' in term]
+                    
+                    # Remove true sub-phrases from phrases
+                    filtered_phrases_final = remove_true_subphrases(phrases_only_final)
+                    
+                    # Recombine
+                    all_terms = words_only_final + filtered_phrases_final
+                
                 term_counts = Counter(all_terms)
                 
                 # Get top terms - 20 significant words and more phrases
                 top_single_words = [w for w, _ in term_counts.most_common(100) if ' ' not in w][:20]  # Increased to 20
-                # Include phrases that appear at least once (reduced from > 1 to >= 1 for short recordings)
-                top_phrases = [p for p, count in term_counts.most_common(200) if ' ' in p and count >= 1][:25]  # Increased to 25 phrases
+                # Include phrases that appear multiple times (more reliable and significant)
+                top_phrases = [p for p, count in term_counts.most_common(300) if ' ' in p and count >= 1][:35]  # At least 1 occurrence, more phrases
                 
 
                 
@@ -1247,13 +1704,22 @@ For technical support or questions, visit the Bluvia website."""
                     top_single_words = all_single_words[:20]
                 
                 if len(top_phrases) < 10:
-                    # Look for more phrases in the most common terms
-                    all_phrases = [p for p, _ in term_counts.most_common(300) if ' ' in p and len(p.split()) <= 3]
+                    # Look for more phrases in the most common terms, prioritizing longer ones
+                    all_phrases = [p for p, count in term_counts.most_common(300) if ' ' in p and count >= 2]
+                    # Sort by length (longer first) and then by frequency
+                    all_phrases.sort(key=lambda x: (len(x[0].split()), x[1]), reverse=True)
                     top_phrases = all_phrases[:25]
+                    
+                    # If still not enough, also include phrases that appear 1+ times but are shorter
+                    if len(top_phrases) < 15:
+                        multiple_occurrence_phrases = [p for p, count in term_counts.most_common(400) if ' ' in p and count >= 1 and len(p.split()) >= 3]
+                        multiple_occurrence_phrases.sort(key=lambda x: (len(x.split()), x[1]), reverse=True)
+                        top_phrases.extend(multiple_occurrence_phrases[:15])
                 
                 keypoints = top_single_words + top_phrases
+                
             
-            # Fallback: if no keypoints found, use most common words regardless of stopwords
+            # Final fallback: if no keypoints found at all, use most common words regardless of stopwords
             if not keypoints and transcript.strip():
                 # Import required modules if not already imported
                 if 're' not in globals():
@@ -1277,6 +1743,7 @@ For technical support or questions, visit the Bluvia website."""
                     keypoints = [w for w, _ in all_counts.most_common(15)]
             
             # Find when key points are mentioned
+            
             try:
                 keypoint_times = {kp: [] for kp in keypoints}
                 
@@ -1324,14 +1791,14 @@ For technical support or questions, visit the Bluvia website."""
                         f.write("\n📝 Most Mentioned Words (Top 20):\n  • No significant words encountered\n")
                     
                     if phrases:
-                        f.write("\n💬 Most Mentioned Phrases (Strict filtering - max 1 stopword for 2-3 word phrases):\n")
+                        f.write("\n💬 Most Mentioned Phrases (Improved filtering - more lenient for better coverage):\n")
                         for i, (kp, times) in enumerate(phrases, 1):
                             try:
                                 f.write(f"  {i:2d}. \"{kp}\": {', '.join([f'{t:.1f}s' for t in times])}\n")
                             except Exception as write_error:
                                 continue
                     else:
-                        f.write("\n💬 Most Mentioned Phrases (Strict filtering - max 1 stopword for 2-3 word phrases):\n  • No significant phrases encountered\n")
+                        f.write("\n💬 Most Mentioned Phrases (Improved filtering - more lenient for better coverage):\n  • No significant phrases encountered\n")
                 
             except Exception as file_error:
                 print(f"Error writing output file: {file_error}")
@@ -1359,21 +1826,27 @@ For technical support or questions, visit the Bluvia website."""
                     summary += "\n📝 Most Mentioned Words (Top 20):\n  • No significant words encountered\n"
                 
                 if phrases:
-                    summary += "\n💬 Most Mentioned Phrases (Strict filtering - max 1 stopword for 2-3 word phrases):\n"
+                    summary += "\n💬 Most Mentioned Phrases (Improved filtering - more lenient for better coverage):\n"
                     for i, (kp, times) in enumerate(phrases, 1):
                         try:
                             summary += f"  {i:2d}. \"{kp}\": {', '.join([f'{t:.1f}s' for t in times])}\n"
                         except Exception as format_error:
                             continue
                 else:
-                    summary += "\n💬 Most Mentioned Phrases (Strict filtering - max 1 stopword for 2-3 word phrases):\n  • No significant phrases encountered\n"
+                    summary += "\n💬 Most Mentioned Phrases (Improved filtering - more lenient for better coverage):\n  • No significant phrases encountered\n"
                 
             except Exception as summary_error:
                 summary = "--- Key Talking Points & Phrases ---\n\nError occurred while processing keypoints."
             
             def show_results():
-                self.status_label.config(text=f"Transcription complete. See {output_txt}")
-                messagebox.showinfo("Key Talking Points", summary)
+                # Check if we found enough content
+                total_keypoints = len(single_words) + len(phrases)
+                if total_keypoints < 10:
+                    self.status_label.config(text=f"Transcription complete but found only {total_keypoints} key points. See {output_txt}")
+                    messagebox.showwarning("Limited Results", f"Only {total_keypoints} significant key points found. This might indicate:\n- Audio quality issues\n- Very short speech content\n- Transcription problems\n\nCheck the output file for details.")
+                else:
+                    self.status_label.config(text=f"Transcription complete. Found {total_keypoints} key points. See {output_txt}")
+                    messagebox.showinfo("Key Talking Points", summary)
                 
                 # Open the folder containing the recording and transcription
                 recording_dir = os.path.dirname(audio_path)

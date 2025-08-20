@@ -1,0 +1,124 @@
+INSTALLATION INSTRUCTIONS
+=========================
+
+Radio Transcription Tool v3.1 - Windows Installation Guide (August 2025)
+=========================================================
+
+PREREQUISITES:
+==============
+- Windows 10 or Windows 11 (64-bit)
+- Minimum 4GB RAM
+- 100MB free disk space
+- Active internet connection (required for AI transcription)
+- OpenAI API key (free account available at openai.com)
+
+STEP-BY-STEP INSTALLATION:
+==========================
+
+1. DOWNLOAD & EXTRACT
+   -------------------
+   - Download the ZIP file from the download site
+   - Right-click the ZIP file and select "Extract All..."
+   - Choose a destination folder (e.g., C:\Radio_Transcription_Tool)
+   - Click "Extract"
+   - Ensure all files are extracted to the same folder
+
+2. FIRST RUN SETUP
+   ----------------
+   - Navigate to the extracted folder
+   - Double-click "Radio_transcription_tool_Bluvia_v3.1.exe"
+   - Windows may show security warnings - this is normal for new software
+   - Click "More info" then "Run anyway" if prompted
+   - The application will start and display the main interface
+
+3. OPENAI API KEY CONFIGURATION
+   -----------------------------
+   - When prompted, click "Set OpenAI API Key"
+   - Enter your OpenAI API key (starts with 'sk-')
+   - Click "Save" to store the key
+   - Your API key is stored locally and encrypted
+
+4. VERIFY INSTALLATION
+   --------------------
+   - Test the application with a sample audio file
+   - Ensure transcription works correctly
+   - Check that all features are accessible
+
+FOLDER STRUCTURE:
+=================
+After installation, your folder should contain:
+- Radio_transcription_tool_Bluvia_v3.1.exe (main application)
+- Bluvia images/ (application graphics)
+- bin/ (FFmpeg binaries)
+- README.txt (documentation)
+- CHANGELOG.txt (version history)
+- LICENSE.txt (license terms)
+
+TROUBLESHOOTING:
+================
+
+PROBLEM: Application won't start
+SOLUTION: 
+- Ensure all files are extracted to the same folder
+- Check Windows Defender isn't blocking the executable
+- Try running as Administrator
+- Verify you have sufficient disk space
+
+PROBLEM: "FFmpeg not found" error
+SOLUTION:
+- Ensure the bin/ folder is present with ffmpeg.exe
+- Check that all files were extracted completely
+- Re-download if files are missing
+
+PROBLEM: Transcription fails
+SOLUTION:
+- Verify your OpenAI API key is correct
+- Check your internet connection
+- Ensure you have sufficient API credits
+- Try with a smaller audio file first
+
+PROBLEM: Windows SmartScreen warning
+SOLUTION:
+- Click "More info" then "Run anyway"
+- This is normal for new software not yet widely distributed
+- The application is safe and open source
+
+SYSTEM REQUIREMENTS:
+====================
+- Operating System: Windows 10/11 (64-bit)
+- Processor: Intel Core i3 or equivalent
+- Memory: 4GB RAM minimum, 8GB recommended
+- Storage: 100MB free space
+- Graphics: Any modern graphics card
+- Network: Broadband internet connection
+
+PERFORMANCE TIPS:
+=================
+- Close other applications during transcription
+- Use SSD storage for faster file access
+- Ensure stable internet connection
+- Process audio files in smaller chunks for large recordings
+
+UNINSTALLATION:
+===============
+- Simply delete the Radio Transcription Tool folder
+- No registry entries or system files are modified
+- Your transcriptions and settings are stored locally and can be backed up
+
+SUPPORT:
+========
+- Check the README.txt file for detailed usage instructions
+- Review the CHANGELOG.txt for known issues
+- Visit the application's help menu for additional guidance
+- Contact support through the application interface
+
+LICENSE:
+========
+This software is provided as-is under the terms of the included LICENSE.txt file.
+Please read and understand the license terms before use.
+
+ENJOY YOUR TRANSCRIPTIONS!
+==========================
+The Radio Transcription Tool makes radio content accessible through 
+AI-powered transcription. Start exploring Dutch and Belgian radio 
+stations today!

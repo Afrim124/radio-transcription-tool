@@ -1,0 +1,92 @@
+CHANGELOG - Radio Transcription Tool
+====================================
+
+v3.1 (Current Release) - August 2025
+======================================
+NEW FEATURES:
+- Enhanced GUI with modern Tkinter interface
+- Professional Bluvia branding and logo integration
+- Improved menu system with Help and About dialogs
+- Better error handling and user feedback
+- Optimized PyInstaller build configuration
+- Reduced executable size for faster distribution
+
+IMPROVEMENTS:
+- Streamlined audio processing workflow
+- Enhanced transcription accuracy with OpenAI Whisper API
+- Better keyword extraction using KeyBERT integration
+- Improved file organization with timestamped folders
+- More robust FFmpeg integration with bundled binaries
+- Enhanced user experience with intuitive controls
+
+TECHNICAL UPDATES:
+- Updated to Python 3.8+ compatibility
+- Optimized dependencies and reduced package size
+- Better memory management for large audio files
+- Improved cross-platform compatibility
+- Enhanced error logging and debugging capabilities
+
+BUG FIXES:
+- Fixed audio recording stability issues
+- Resolved transcription timeout problems
+- Corrected file path handling on Windows
+- Fixed memory leaks during long recordings
+- Resolved GUI freezing during transcription
+
+v3.0 - July 2025
+=====================
+NEW FEATURES:
+- Major UI redesign with modern interface
+- Support for 40+ Dutch and Belgian radio stations
+- Live stream listening capability
+- Advanced keyword extraction algorithms
+- Professional icon and branding elements
+
+IMPROVEMENTS:
+- Enhanced radio station database
+- Better audio format support
+- Improved transcription quality
+- Streamlined workflow for users
+
+v2.0 - June 2025
+====================
+NEW FEATURES:
+- Initial public release
+- Basic transcription functionality
+- Simple GUI interface
+- Support for multiple audio formats
+- OpenAI API integration
+
+CORE FUNCTIONALITY:
+- Audio recording from radio streams
+- AI-powered transcription
+- Basic keyword extraction
+- File management system
+- User-friendly interface
+
+v1.0 - May 2025
+======================
+- Initial development version
+- Basic audio recording capabilities
+- Simple transcription interface
+- Core functionality implementation
+
+KNOWN ISSUES:
+============
+- Some antivirus software may flag the executable (false positive)
+- Requires internet connection for AI transcription
+- Large audio files may take time to process
+
+PLANNED FEATURES:
+=================
+- Batch processing capabilities
+- Export to multiple formats
+- Advanced audio editing tools
+- Cloud storage integration
+- Multi-language support
+
+For detailed information about each version, please refer to the README.md file.
+For support and updates, check the application's help menu or contact the development team.
+
+---
+Radio Transcription Tool - Making radio content accessible through AI transcription
