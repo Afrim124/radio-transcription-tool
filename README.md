@@ -1,6 +1,19 @@
-# Radio Transcription Tool v3.1
+# Radio Transcription Tool v3.2
 
 A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with advanced keyword extraction powered by KeyBERT.
+
+##    Latest Version: v3.2
+
+**Major improvement in phrase detection!** 
+
+- **7x more sentences found** compared to v3.1
+- Better transcription quality with 5-minute chunks
+- Improved filtering for 4-word phrases
+- Enhanced Dutch language support
+
+### 📥 Download
+- [v3.2 Release] https://sourceforge.net/projects/radio-transcription-tool/
+- [Previous versions] https://sourceforge.net/projects/radio-transcription-tool/
 
 ## 🎯 Features
 
@@ -174,4 +187,4 @@ For support and questions:
 
 ---
 
-**Radio Transcription Tool v3.1** - Professional audio transcription and analysis for Dutch and Belgian radio content. 
+**Radio Transcription Tool v3.2** - Professional audio transcription and analysis for Dutch and Belgian radio content. 

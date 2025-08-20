@@ -1,6 +1,26 @@
 CHANGELOG - Radio Transcription Tool
 ====================================
 
+v3.2.0 (2024-12-19)
+===================
+   MAJOR IMPROVEMENT: 7x better phrase detection
+- Reduced chunk size from 10 to 5 minutes for better quality
+- Increased stopword allowance for 4-word phrases (2→3)
+- Lowered KeyBERT score thresholds for more coverage
+- Added comprehensive debug information
+- Enhanced fallback method with better criteria
+- Added Dutch Whisper prompt for radio context
+
+PERFORMANCE:
+- v3.1: 2 significant phrases in 1-hour recording
+- v3.2: 14+ significant phrases in 20-minute recording
+- Improvement: 7x better phrase detection
+
+TECHNICAL:
+- Updated PyInstaller spec file for v3.2
+- Better error handling and user feedback
+- Improved status updates during transcription
+
 v3.1 (Current Release) - August 2025
 ======================================
 NEW FEATURES:
