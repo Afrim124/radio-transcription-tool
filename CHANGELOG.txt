@@ -1,27 +1,62 @@
 CHANGELOG - Radio Transcription Tool
 ====================================
 
-v3.2.0 (2024-12-19)
-===================
-   MAJOR IMPROVEMENT: 7x better phrase detection
-- Reduced chunk size from 10 to 5 minutes for better quality
-- Increased stopword allowance for 4-word phrases (2→3)
-- Lowered KeyBERT score thresholds for more coverage
-- Added comprehensive debug information
-- Enhanced fallback method with better criteria
-- Added Dutch Whisper prompt for radio context
+v3.5.0 (2025-08-29)
+==================
+   NEW FEATURE: Audio Cleanup Settings & User Control
 
-PERFORMANCE:
-- v3.1: 2 significant phrases in 1-hour recording
-- v3.2: 14+ significant phrases in 20-minute recording
-- Improvement: 7x better phrase detection
+NEW FEATURES:
+- Added Audio Cleanup Settings menu item in Settings menu
+- User-configurable checkbox to control automatic audio file deletion
+- Persistent settings saved to audio_cleanup_config.txt
+- Option to keep audio files for manual review when disabled
+
+USER EXPERIENCE:
+- Clear settings dialog explaining the cleanup behavior
+- Immediate feedback when settings are changed
+- Settings persist between application sessions
+- Default behavior maintains backward compatibility (auto-cleanup enabled)
 
 TECHNICAL:
-- Updated PyInstaller spec file for v3.2
-- Better error handling and user feedback
-- Improved status updates during transcription
+- New configuration file management system
+- Integration with existing settings infrastructure
+- Proper error handling for configuration operations
+- Automatic creation of "Transcriptions" subfolder in recording directories
+- Intelligent cleanup: moves transcriptions to subfolder, removes audio, cleans empty folders
+- Improved file organization and storage management
 
-v3.1 (Current Release) - August 2025
+BUG FIXES:
+- Fixed critical bug: Missing 'is_whisper_artifact' function causing transcription failures
+- Resolved "name 'is_whisper_artifact' is not defined" error during long recordings
+- Transcription process now properly filters Whisper prompt artifacts
+- Audio cleanup setting now properly respected during transcription process
+
+v3.4.0 (2025-08-29)
+===================
+   MAJOR IMPROVEMENT: Automatic Audio Cleanup, Enhanced Content Merging & Whisper Artifact Filtering
+- **Automatic audio file cleanup** after successful transcription
+- **Enhanced content-based merging** for better transcriptions  
+- **Comprehensive Whisper prompt filtering** to remove artifacts
+- **Much more lenient KeyBERT filtering** to preserve meaningful content
+- Improved similarity detection for overlapping phrases
+- Better preservation of long meaningful phrases (8+ words)
+- Enhanced medium phrase preservation (5-7 words)
+- Smarter subphrase removal that only removes obvious duplicates
+
+PERFORMANCE:
+- v3.3: Limited meaningful phrases due to aggressive filtering
+- v3.4: Significantly more meaningful content preserved
+- Improvement: Better quality transcriptions with automatic cleanup
+
+TECHNICAL:
+- Centralized version management with VERSION constant
+- Added comprehensive debug logging for transcription process
+- Improved error handling and graceful fallbacks
+- Enhanced memory efficiency with automatic cleanup
+- Fixed Whisper prompt artifacts contaminating transcriptions
+- Resolved aggressive filtering that removed too many meaningful phrases
+
+v3.3 (Previous Release) - August 2025
 ======================================
 NEW FEATURES:
 - Enhanced GUI with modern Tkinter interface
@@ -52,6 +87,26 @@ BUG FIXES:
 - Corrected file path handling on Windows
 - Fixed memory leaks during long recordings
 - Resolved GUI freezing during transcription
+
+v3.2.0 - July 2025
+===================
+   MAJOR IMPROVEMENT: 7x better phrase detection
+- Reduced chunk size from 10 to 5 minutes for better quality
+- Increased stopword allowance for 4-word phrases (2→3)
+- Lowered KeyBERT score thresholds for more coverage
+- Added comprehensive debug information
+- Enhanced fallback method with better criteria
+- Added Dutch Whisper prompt for radio context
+
+PERFORMANCE:
+- v3.1: 2 significant phrases in 1-hour recording
+- v3.2: 14+ significant phrases in 20-minute recording
+- Improvement: 7x better phrase detection
+
+TECHNICAL:
+- Updated PyInstaller spec file for v3.2
+- Better error handling and user feedback
+- Improved status updates during transcription
 
 v3.0 - July 2025
 =====================

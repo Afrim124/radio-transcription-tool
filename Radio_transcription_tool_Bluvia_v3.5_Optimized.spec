@@ -65,7 +65,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='Radio_transcription_tool_Bluvia_v3.2_Optimized',
+    name='Radio_transcription_tool_Bluvia_v3.5_Optimized',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -80,4 +80,5 @@ exe = EXE(
     entitlements_file=None,
     icon='Bluvia images\\Bluebird app icon 2a.ico',  # Double backslashes for Windows
 )
+
 

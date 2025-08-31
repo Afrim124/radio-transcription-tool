@@ -1,7 +1,7 @@
 INSTALLATION INSTRUCTIONS
 =========================
 
-Radio Transcription Tool v3.1 - Windows Installation Guide (August 2025)
+Radio Transcription Tool v3.5 - Windows Installation Guide (August 2025)
 =========================================================
 
 PREREQUISITES:

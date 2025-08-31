@@ -2421,8 +2421,8 @@ For technical support or questions, visit the Bluvia website."""
                         
                     print(f"DEBUG: Processing sentence {sentence_idx+1}: '{sentence[:100]}...' ({len(sentence_words)} words)")
                     
-                    # Generate 5-word phrases first (highest priority) - NON-OVERLAPPING
-                    for i in range(0, len(sentence_words) - 4, 3):  # Step by 3 to avoid overlaps
+                    # Generate 5-word phrases first (highest priority)
+                    for i in range(len(sentence_words) - 4):
                         word1, word2, word3, word4, word5 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3], sentence_words[i+4]
                         stopword_count = sum(1 for word in [word1, word2, word3, word4, word5] if word in stopwords)
                         if stopword_count <= 2:  # Allow max 2 stopwords for 5-word phrases
@@ -2432,8 +2432,8 @@ For technical support or questions, visit the Bluvia website."""
                                 phrases.append(phrase)
                                 print(f"DEBUG: Added 5-word phrase: '{phrase}'")
                     
-                    # Generate 4-word phrases (high priority) - NON-OVERLAPPING
-                    for i in range(0, len(sentence_words) - 3, 2):  # Step by 2 to reduce overlaps
+                    # Generate 4-word phrases (high priority) - MORE LENIENT
+                    for i in range(len(sentence_words) - 3):
                         word1, word2, word3, word4 = sentence_words[i], sentence_words[i+1], sentence_words[i+2], sentence_words[i+3]
                         stopword_count = sum(1 for word in [word1, word2, word3, word4] if word in stopwords)
                         if stopword_count <= 3:  # Allow max 3 stopwords for 4-word phrases (more lenient)
@@ -2444,8 +2444,8 @@ For technical support or questions, visit the Bluvia website."""
                                 if len(phrases) <= 10:  # Only show first 10 to avoid spam
                                     print(f"DEBUG: Added 4-word phrase: '{phrase}'")
                     
-                    # Generate 3-word phrases (medium priority) - NON-OVERLAPPING
-                    for i in range(0, len(sentence_words) - 2, 2):  # Step by 2 to reduce overlaps
+                    # Generate 3-word phrases (medium priority) - MORE LENIENT
+                    for i in range(len(sentence_words) - 2):
                         word1, word2, word3 = sentence_words[i], sentence_words[i+1], sentence_words[i+2]
                         stopword_count = sum(1 for word in [word1, word2, word3] if word in stopwords)
                         if stopword_count <= 2:  # Allow max 2 stopwords for 3-word phrases (more lenient)
@@ -2456,9 +2456,9 @@ For technical support or questions, visit the Bluvia website."""
                                 if len(phrases) <= 20:  # Only show first 20 to avoid spam
                                     print(f"DEBUG: Added 3-word phrase: '{phrase}'")
                     
-                    # Generate 2-word phrases last (lowest priority, but more generous) - NON-OVERLAPPING
+                    # Generate 2-word phrases last (lowest priority, but more generous)
                     if len(phrases) < 30:  # Allow more 2-word phrases to ensure coverage
-                        for i in range(0, len(sentence_words) - 1, 2):  # Step by 2 to reduce overlaps
+                        for i in range(len(sentence_words) - 1):
                             word1, word2 = sentence_words[i], sentence_words[i+1]
                             stopword_count = sum(1 for word in [word1, word2] if word in stopwords)
                             if stopword_count <= 1:  # Allow max 1 stopword for 2-word phrases
@@ -2479,30 +2479,6 @@ For technical support or questions, visit the Bluvia website."""
                 if phrases:
                     phrase_lengths = [len(p.split()) for p in phrases]
                     print(f"DEBUG: Phrase lengths: 2w={phrase_lengths.count(2)}, 3w={phrase_lengths.count(3)}, 4w={phrase_lengths.count(4)}, 5w={phrase_lengths.count(5)}")
-                
-                # Remove overlapping phrases before combining with words
-                if phrases:
-                    print(f"DEBUG: Removing overlapping phrases...")
-                    original_count = len(phrases)
-                    
-                    # Sort phrases by length (longest first) and remove overlaps
-                    phrases.sort(key=len, reverse=True)
-                    unique_phrases = []
-                    
-                    for phrase in phrases:
-                        is_overlap = False
-                        for existing in unique_phrases:
-                            # Check if this phrase is contained within an existing phrase
-                            if phrase in existing or existing in phrase:
-                                # Keep the longer phrase, skip the shorter one
-                                is_overlap = True
-                                break
-                        if not is_overlap:
-                            unique_phrases.append(phrase)
-                    
-                    phrases = unique_phrases
-                    print(f"DEBUG: Removed {original_count - len(phrases)} overlapping phrases, kept {len(phrases)} unique phrases")
-                    logging.info(f"DEDUP: Removed {original_count - len(phrases)} overlapping phrases, kept {len(phrases)} unique")
                 
                 # Merge overlapping phrases before counting
                 if len(all_terms) > 1:

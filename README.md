@@ -1,8 +1,8 @@
-# Radio Transcription Tool v3.2
+# Radio Transcription Tool v3.4
 
-A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with advanced keyword extraction powered by KeyBERT.
+A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with enhanced music detection, improved phrase detection, and advanced deduplication powered by Bluvia.
 
-##    Latest Version: v3.2
+##    Latest Version: v3.4
 
 **Major improvement in phrase detection!** 
 
@@ -12,7 +12,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 - Enhanced Dutch language support
 
 ### 📥 Download
-- [v3.2 Release] https://sourceforge.net/projects/radio-transcription-tool/
+- [v3.4 Release] https://sourceforge.net/projects/radio-transcription-tool/
 - [Previous versions] https://sourceforge.net/projects/radio-transcription-tool/
 
 ## 🎯 Features
@@ -62,7 +62,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 ### Build Process
 1. **Use the optimized spec file (this is the correct one):**
    ```bash
-   pyinstaller Radio_transcription_tool_Bluvia_v3.1_Optimized.spec
+   pyinstaller Radio_transcription_tool_Bluvia_v3.4_Optimized.spec
    ```
 
 2. **Copy FFmpeg binaries:**
@@ -71,9 +71,9 @@ A professional Python application for recording and transcribing Dutch and Belgi
    xcopy "bin" "dist\bin" /E /I
    ```
 
-**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec` is already configured correctly and points to the clean build file.
+**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.4_Optimized.spec` is already configured correctly and points to the clean build file.
 
-**Important**: There is no `radio_transcription_final.spec` file in this directory. The correct spec file to use is `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec`.
+**Important**: There is no `radio_transcription_final.spec` file in this directory. The correct spec file to use is `Radio_transcription_tool_Bluvia_v3.4_Optimized.spec`.
 
 ### Build Results
 - **Executable size**: ~29MB (optimized)

@@ -1,4 +1,4 @@
-# Core dependencies for Radio Transcription Tool v3.1
+# Core dependencies for Radio Transcription Tool v3.4
 # Python 3.8+ required
 
 # GUI Framework

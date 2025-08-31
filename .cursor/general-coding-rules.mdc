@@ -1,0 +1,34 @@
+# General Coding Rules
+
+## Core Principles
+
+- **Be concise and do not overengineer**
+- **Carefully follow the instructions and do not assume anything that hasn't been stated specifically**
+- **Do not generate tests, unless asked to do so**
+- **Your code is not supposed to cover all the edge cases, but present the idea**
+- **Never extrapolate and assume the user wants more than they ask for**
+- **Ask follow up questions when you encounter some ambiguity**
+- **Aim for simplicity**
+- **Do not derive any additional method parameters then the ones defined explicitly by the user**
+
+## Application to This Project
+
+These rules are especially important for the radio transcription tool because:
+
+1. **Audio processing is complex enough** - don't add unnecessary complexity
+2. **Working code exists** - make minimal, targeted changes only
+3. **Debugging requires precision** - don't assume what the problem is
+4. **User knows their needs** - implement exactly what's requested, nothing more
+
+## When Working on This Codebase
+
+- **Start from working code** (v3.2) rather than trying to fix broken code
+- **Make one small change at a time** and test it
+- **Don't rewrite working functions** unless specifically requested
+- **Focus on the stated problem** rather than perceived improvements
+- **Ask for clarification** if the debugging request is ambiguous
+- **Make a copy of every last working version in the same directory with a version number that slowly increases**
+description:
+globs:
+alwaysApply: true
+---
