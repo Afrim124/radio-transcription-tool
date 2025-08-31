@@ -1,18 +1,19 @@
-# Radio Transcription Tool v3.4
+# Radio Transcription Tool v3.5
 
-A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with enhanced music detection, improved phrase detection, and advanced deduplication powered by Bluvia.
+A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with enhanced music detection, improved phrase detection, comprehensive logging, and advanced deduplication powered by Bluvia.
 
-##    Latest Version: v3.4
+##    Latest Version: v3.5
 
-**Major improvement in phrase detection!** 
+**Major improvements in reliability and debugging!** 
 
-- **7x more sentences found** compared to v3.1
-- Better transcription quality with 5-minute chunks
-- Improved filtering for 4-word phrases
-- Enhanced Dutch language support
+- **Comprehensive logging system** for both script and executable versions
+- **Enhanced fallback mechanism** that triggers more reliably
+- **Fixed overlapping phrase generation** for cleaner keypoints
+- **Better error handling** and debugging information
+- **Improved phrase deduplication** to eliminate repetitive content
 
 ### 📥 Download
-- [v3.4 Release] https://sourceforge.net/projects/radio-transcription-tool/
+- [v3.5 Release] https://sourceforge.net/projects/radio-transcription-tool/
 - [Previous versions] https://sourceforge.net/projects/radio-transcription-tool/
 
 ## 🎯 Features
@@ -21,6 +22,8 @@ A professional Python application for recording and transcribing Dutch and Belgi
 - **Live Stream Listening**: Listen to radio streams without recording
 - **AI Transcription**: High-quality transcription using OpenAI Whisper API
 - **Smart Keyword Extraction**: Advanced phrase analysis with KeyBERT, prioritizing longer meaningful phrases
+- **Comprehensive Logging**: Detailed logging system for debugging and monitoring
+- **Enhanced Fallback System**: Robust fallback mechanism when KeyBERT is unavailable
 - **Professional UI**: Modern Tkinter interface with Bluvia branding
 - **Organized Output**: Timestamped folders with MP3 recordings and transcriptions
 - **API Key Management**: Built-in OpenAI API key configuration
@@ -62,7 +65,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 ### Build Process
 1. **Use the optimized spec file (this is the correct one):**
    ```bash
-   pyinstaller Radio_transcription_tool_Bluvia_v3.4_Optimized.spec
+   pyinstaller Radio_transcription_tool_Bluvia_v3.5_Optimized.spec
    ```
 
 2. **Copy FFmpeg binaries:**
@@ -71,9 +74,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
    xcopy "bin" "dist\bin" /E /I
    ```
 
-**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.4_Optimized.spec` is already configured correctly and points to the clean build file.
-
-**Important**: There is no `radio_transcription_final.spec` file in this directory. The correct spec file to use is `Radio_transcription_tool_Bluvia_v3.4_Optimized.spec`.
+**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.5_Optimized.spec` is already configured correctly and points to the clean build file.
 
 ### Build Results
 - **Executable size**: ~29MB (optimized)
@@ -85,7 +86,7 @@ A professional Python application for recording and transcribing Dutch and Belgi
 ```
 Radio_transcription_tool/
 ├── radio_transcription_final_build_clean.py    # Main application
-├── Radio_transcription_tool_Bluvia_v3.1_Optimized.spec  # PyInstaller spec
+├── Radio_transcription_tool_Bluvia_v3.5_Optimized.spec  # PyInstaller spec
 ├── Bluvia images/                       # Application images and icons
 │   ├── Bluebird app icon 2a.ico        # Main application icon
 │   ├── Bluvia logo.jpeg                # About screen logo
@@ -96,6 +97,7 @@ Radio_transcription_tool/
 ├── build/                               # PyInstaller build directory
 ├── dist/                                # PyInstaller output directory
 ├── Recordings+transcriptions/           # Output directory (auto-created)
+│   └── transcription.log               # Comprehensive logging file
 └── README.md                            # This file
 ```
 
@@ -126,6 +128,12 @@ Radio_transcription_tool/
 - **Format**: `YYYYMMDD_HHMMSS_StationName/radio_recording_YYYYMMDD.mp3`
 - **Transcriptions**: Saved alongside recordings
 
+### Logging System
+- **Log file**: `Recordings+transcriptions/transcription.log`
+- **Content**: Recording start/end times, transcript details, fallback triggers, results summary
+- **Format**: Timestamped entries with clear status information
+- **Availability**: Works in both script and executable versions
+
 ## 🔧 Technical Details
 
 ### Dependencies
@@ -133,6 +141,21 @@ Radio_transcription_tool/
 - **Audio**: pydub, ffmpeg
 - **AI**: openai, keybert, sentence-transformers
 - **Images**: PIL (Pillow)
+- **Logging**: logging, datetime
+
+### Enhanced Fallback Mechanism
+- **Automatic triggering**: When KeyBERT finds fewer than 15 keypoints
+- **Aggressive fallback**: Forces fallback when KeyBERT finds fewer than 20 keypoints
+- **Non-overlapping phrases**: Uses stepping algorithms to prevent duplicate content
+- **Smart deduplication**: Removes overlapping phrases while keeping the most complete versions
+- **Multiple fallback levels**: Ensures meaningful content is always extracted
+
+### Improved Phrase Generation
+- **5-word phrases**: Generated with 3-word stepping to avoid overlaps
+- **4-word phrases**: Generated with 2-word stepping to reduce overlaps
+- **3-word phrases**: Generated with 2-word stepping to reduce overlaps
+- **2-word phrases**: Generated with 2-word stepping to reduce overlaps
+- **Overlap detection**: Automatically removes phrases that are contained within longer ones
 
 ### Keyword Extraction Strategy
 - **Prioritizes longer phrases**: 2+ word phrases get highest priority
@@ -157,6 +180,16 @@ Radio_transcription_tool/
 2. **API key error**: Set your OpenAI API key via Settings menu
 3. **Image loading issues**: Check `Bluvia images/` folder exists
 4. **Large executable**: Use the optimized .spec file
+5. **No debug output in executable**: Check `transcription.log` file in `Recordings+transcriptions/` folder
+
+### Debugging with Logs
+- **Check log file**: `Recordings+transcriptions/transcription.log`
+- **Look for**: Recording start/end times, fallback triggers, error messages
+- **Common log entries**:
+  - `RECORDING START: filename.mp3`
+  - `TRANSCRIPT: X words, X chars`
+  - `FALLBACK: KeyBERT=false, Found=X`
+  - `RESULTS: X keypoints (X words, X phrases)`
 
 ### Build Issues
 - **Missing modules**: Check `hiddenimports` in .spec file
@@ -187,4 +220,4 @@ For support and questions:
 
 ---
 
-**Radio Transcription Tool v3.2** - Professional audio transcription and analysis for Dutch and Belgian radio content. 
+**Radio Transcription Tool v3.5** - Professional audio transcription and analysis for Dutch and Belgian radio content with comprehensive logging and enhanced reliability. 
