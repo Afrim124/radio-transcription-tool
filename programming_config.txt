@@ -1,0 +1,5 @@
+{
+  "auto_update": true,
+  "station": "Radio 1 (Netherlands)",
+  "webpage": "https://www.nporadio1.nl/gids"
+}

@@ -1,190 +1,238 @@
-# Radio Transcription Tool v3.2
+# Radio Transcription Tool v3.7 - Modular Structure
 
-A professional Python application for recording and transcribing Dutch and Belgian radio streams using OpenAI Whisper API, with advanced keyword extraction powered by KeyBERT.
+## Overview
 
-##    Latest Version: v3.2
+The Radio Transcription Tool has been refactored into a modular structure for better maintainability, readability, and scalability. The original monolithic file has been split into focused modules following common programming standards.
 
-**Major improvement in phrase detection!** 
+## Module Structure
 
-- **7x more sentences found** compared to v3.1
-- Better transcription quality with 5-minute chunks
-- Improved filtering for 4-word phrases
-- Enhanced Dutch language support
+### Core Modules
 
-### 📥 Download
-- [v3.2 Release] https://sourceforge.net/projects/radio-transcription-tool/
-- [Previous versions] https://sourceforge.net/projects/radio-transcription-tool/
+1. **`main.py`** - Main entry point
+   - Application initialization
+   - Module imports
+   - Main function
 
-## 🎯 Features
+2. **`config.py`** - Configuration and constants
+   - Version information
+   - Dutch stopwords
+   - Music filtering patterns
+   - Radio station database
+   - Audio processing settings
+   - Transcription settings
+   - Keypoint extraction settings
 
-- **Live Radio Recording**: Record streams from 40+ Dutch and Belgian radio stations
-- **Live Stream Listening**: Listen to radio streams without recording
-- **AI Transcription**: High-quality transcription using OpenAI Whisper API
-- **Smart Keyword Extraction**: Advanced phrase analysis with KeyBERT, prioritizing longer meaningful phrases
-- **Professional UI**: Modern Tkinter interface with Bluvia branding
-- **Organized Output**: Timestamped folders with MP3 recordings and transcriptions
-- **API Key Management**: Built-in OpenAI API key configuration
+3. **`logging_config.py`** - Logging setup and configuration
+   - Setup logging function
+   - Logging helper functions
+   - Centralized logging management
 
-## 🚀 Quick Start
+4. **`utils.py`** - Utility functions
+   - File path management
+   - Configuration loading/saving
+   - Similarity calculations
+   - Whisper artifact detection
 
-### Prerequisites
-- Python 3.8+
-- OpenAI API key
-- FFmpeg (included in `bin/` folder)
+### Feature Modules
 
-### Installation
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/radio-transcription-tool.git
-   cd radio-transcription-tool
-   ```
+5. **`gui.py`** - GUI-related code
+   - Main application window
+   - Menu system
+   - User interface components
+   - Event handling
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+6. **`audio_processing.py`** - Audio recording and processing
+   - Radio stream recording
+   - Audio file loading
+   - Chunk splitting and export
+   - Audio quality enhancement
+   - Silence detection and removal
 
-3. **Set your OpenAI API key:**
-   - Run the application
-   - Go to `Settings` → `Set OpenAI API Key`
-   - Enter your OpenAI API key (starts with 'sk-')
+7. **`transcription.py`** - Transcription and keypoint extraction
+   - OpenAI Whisper integration
+   - KeyBERT keypoint extraction
+   - Fallback extraction methods
+   - Timestamp estimation
+   - Music content filtering
 
-4. **Run the application:**
-   ```bash
-   python radio_transcription_final_build_clean.py
-   ```
+8. **`phrase_filtering.py`** - Phrase filtering and processing
+   - Complete thought detection
+   - Robust phrase filtering
+   - Phrase merging and deduplication
+   - Word filtering
 
-## 🏗️ Building the Executable
+9. **`app.py`** - Main application coordination
+   - High-level workflow coordination
+   - Result processing and formatting
+   - File I/O operations
 
-### Prerequisites
-- PyInstaller: `pip install pyinstaller`
+## Benefits of Modular Structure
 
-### Build Process
-1. **Use the optimized spec file (this is the correct one):**
-   ```bash
-   pyinstaller Radio_transcription_tool_Bluvia_v3.1_Optimized.spec
-   ```
+### 1. Maintainability
+- Each module has a single responsibility
+- Easier to locate and modify specific functionality
+- Reduced code complexity per file
 
-2. **Copy FFmpeg binaries:**
-   ```bash
-   # Copy the bin folder to the dist directory
-   xcopy "bin" "dist\bin" /E /I
-   ```
+### 2. Readability
+- Much easier to understand individual components
+- Clear separation of concerns
+- Better code organization
 
-**Note**: The spec file `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec` is already configured correctly and points to the clean build file.
+### 3. Reusability
+- Functions can be imported and used independently
+- Modules can be tested separately
+- Easier to extend with new features
 
-**Important**: There is no `radio_transcription_final.spec` file in this directory. The correct spec file to use is `Radio_transcription_tool_Bluvia_v3.1_Optimized.spec`.
+### 4. Scalability
+- Easy to add new modules for new features
+- Simple to modify existing modules
+- Better support for team development
 
-### Build Results
-- **Executable size**: ~29MB (optimized)
-- **Full package size**: ~35MB (with FFmpeg)
-- **All images and icons included**
+### 5. Testing
+- Individual modules can be unit tested
+- Easier to mock dependencies
+- Better test coverage
 
-## 📁 Project Structure
+## Usage
+
+### Running the Application
+
+```bash
+# Run the main application
+python main.py
+
+# Or run the app module directly
+python app.py
+```
+
+### Importing Modules
+
+```python
+# Import specific functionality
+from config import VERSION, DUTCH_STOPWORDS
+from audio_processing import record_radio_stream
+from transcription import transcribe_audio_file
+from phrase_filtering import filter_phrases_robust
+
+# Use the functionality
+results = transcribe_audio_file("audio.mp3")
+```
+
+### Building Executable
+
+```bash
+# Build with PyInstaller
+pyinstaller Radio_transcription_tool_Bluvia_v3.7_Optimized.spec
+```
+
+## File Organization
 
 ```
-Radio_transcription_tool/
-├── radio_transcription_final_build_clean.py    # Main application
-├── Radio_transcription_tool_Bluvia_v3.1_Optimized.spec  # PyInstaller spec
-├── Bluvia images/                       # Application images and icons
-│   ├── Bluebird app icon 2a.ico        # Main application icon
-│   ├── Bluvia logo.jpeg                # About screen logo
-│   └── Bluebird favicon.jpeg           # UI favicon
-├── bin/                                 # External executables
-│   ├── ffmpeg.exe                      # Audio processing
-│   └── ffplay.exe                      # Live stream playback
-├── build/                               # PyInstaller build directory
-├── dist/                                # PyInstaller output directory
-├── Recordings+transcriptions/           # Output directory (auto-created)
-└── README.md                            # This file
+Radio_transcription_tool v2.0/
+├── main.py                    # Main entry point
+├── app.py                     # Application coordination
+├── config.py                  # Configuration and constants
+├── logging_config.py          # Logging setup
+├── utils.py                   # Utility functions
+├── gui.py                     # GUI components
+├── audio_processing.py        # Audio processing
+├── transcription.py           # Transcription logic
+├── phrase_filtering.py        # Phrase filtering
+├── requirements_modular.txt   # Dependencies
+├── README_MODULAR.md          # This file
+└── ... (other files)
 ```
 
-## 🎵 Supported Radio Stations
+## Dependencies
 
-### Dutch Stations
-- **Public Broadcasting**: Radio 1, Radio 2, 3FM, Radio 6
-- **Regional**: Radio Rijnmond
-- **Commercial**: BNR Nieuwsradio, Radio 538, Sky Radio, Qmusic, Veronica, Radio 10
-- **Alternative**: KINK
+See `requirements_modular.txt` for the complete list of dependencies.
 
-### Belgian (Flemish) Stations
-- **Public Broadcasting**: Radio 1, Klara, MNM, Studio Brussel, VRT NWS
-- **Regional**: Radio 2 (all provinces)
-- **Commercial**: Qmusic, JOE FM, Radio Contact, TOPradio
-- **Cultural**: Klara Continuo, Klara Jazz, Sporza Radio
-- **Local**: Radio Scorpio, Radio Centraal, Urgent.fm, Radio Campus
+### Core Dependencies
+- `openai` - OpenAI API integration
+- `pydub` - Audio processing
+- `tkinter` - GUI framework
 
-## ⚙️ Configuration
+### Optional Dependencies
+- `keybert` - Keypoint extraction
+- `sentence-transformers` - NLP processing
+- `transformers` - Transformer models
+- `torch` - PyTorch for ML models
 
-### OpenAI API Key
-- **Set**: `Settings` → `Set OpenAI API Key`
-- **Remove**: `Settings` → `Remove OpenAI API Key`
-- **Storage**: Saved locally in `openai_config.txt`
+## Migration from Monolithic Structure
 
-### Output Settings
-- **Location**: `Recordings+transcriptions/` folder in app directory
-- **Format**: `YYYYMMDD_HHMMSS_StationName/radio_recording_YYYYMMDD.mp3`
-- **Transcriptions**: Saved alongside recordings
+The modular structure maintains full compatibility with the original functionality while providing better organization:
 
-## 🔧 Technical Details
+1. **Configuration**: All constants moved to `config.py`
+2. **Logging**: Centralized in `logging_config.py`
+3. **Utilities**: Common functions in `utils.py`
+4. **GUI**: Interface code in `gui.py`
+5. **Audio**: Processing logic in `audio_processing.py`
+6. **Transcription**: Core logic in `transcription.py`
+7. **Filtering**: Phrase processing in `phrase_filtering.py`
+8. **Coordination**: High-level workflow in `app.py`
 
-### Dependencies
-- **Core**: tkinter, threading, time, os, sys
-- **Audio**: pydub, ffmpeg
-- **AI**: openai, keybert, sentence-transformers
-- **Images**: PIL (Pillow)
+## Development Guidelines
 
-### Keyword Extraction Strategy
-- **Prioritizes longer phrases**: 2+ word phrases get highest priority
-- **Balanced coverage**: Ensures sufficient phrases are found while maintaining quality
-- **Frequency-based filtering**: Only includes phrases that appear multiple times (2+ occurrences)
-- **Smart filtering**: Balances meaningful content with phrase length and coverage
-- **Smart merging**: Combines phrases with reasonable overlap (40%+ of shorter phrase)
-- **Eliminates redundancy**: Only removes phrases with substantial overlap (80%+ of shorter phrase)
-- **Extended phrase range**: Supports phrases from 2-8 words for comprehensive coverage
+### Adding New Features
 
-### Build Optimization
-- **Excluded**: Heavy ML packages (torch, tensorflow, sklearn)
-- **Excluded**: Web frameworks (flask, django, fastapi)
-- **Excluded**: Database packages (sqlalchemy, sqlite3)
-- **Included**: Essential dependencies only
-- **Result**: 29MB executable vs 200MB+ without optimization
+1. **Identify the appropriate module** for your feature
+2. **Add functions** to the relevant module
+3. **Update imports** in other modules if needed
+4. **Test the functionality** independently
+5. **Update documentation** as needed
 
-## 🐛 Troubleshooting
+### Modifying Existing Features
 
-### Common Issues
-1. **FFmpeg not found**: Ensure `bin/` folder is copied to `dist/`
-2. **API key error**: Set your OpenAI API key via Settings menu
-3. **Image loading issues**: Check `Bluvia images/` folder exists
-4. **Large executable**: Use the optimized .spec file
+1. **Locate the relevant module** using the structure guide
+2. **Make changes** to the specific module
+3. **Test the changes** thoroughly
+4. **Update related modules** if necessary
 
-### Build Issues
-- **Missing modules**: Check `hiddenimports` in .spec file
-- **Large size**: Review `excludes` list in .spec file
-- **Icon not working**: Use double backslashes in icon path
+### Code Style
 
-## 📝 License
+- Follow Python PEP 8 guidelines
+- Use descriptive function and variable names
+- Add docstrings to all functions
+- Keep modules focused on their specific purpose
+- Use type hints where appropriate
 
-This project is open source. See [LICENSE](LICENSE) for details.
+## Troubleshooting
 
-## 🤝 Contributing
+### Import Errors
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+If you encounter import errors:
 
-## 📞 Support
+1. **Check module paths** - Ensure all modules are in the same directory
+2. **Verify dependencies** - Install required packages from `requirements_modular.txt`
+3. **Check Python path** - Ensure the project directory is in your Python path
 
-For support and questions:
-- **Website**: [Bluvia.nl](https://bluvia.nl)
-- **Issues**: Use GitHub Issues
-- **Documentation**: Check this README and code comments
+### Missing Dependencies
 
-## 🏆 Credits
+Install missing dependencies:
 
-- **Developed by**: Bluvia
-- **Powered by**: OpenAI Whisper API, KeyBERT
-- **Audio Processing**: FFmpeg
-- **UI Framework**: Tkinter
+```bash
+pip install -r requirements_modular.txt
+```
 
----
+### Module Not Found
 
-**Radio Transcription Tool v3.2** - Professional audio transcription and analysis for Dutch and Belgian radio content. 
+Ensure all modules are present and properly named:
+- `config.py`
+- `logging_config.py`
+- `utils.py`
+- `gui.py`
+- `audio_processing.py`
+- `transcription.py`
+- `phrase_filtering.py`
+- `app.py`
+
+## Support
+
+For issues with the modular structure:
+
+1. **Check the module structure** against this documentation
+2. **Verify all dependencies** are installed
+3. **Test individual modules** to isolate issues
+4. **Check the original monolithic file** for reference if needed
+
+The modular structure provides the same functionality as the original monolithic version while offering significant improvements in maintainability and extensibility.
