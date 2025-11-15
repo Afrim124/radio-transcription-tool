@@ -1,6 +1,6 @@
 # Configuration and constants for Radio Transcription Tool
 # Version information
-VERSION = "3.7"
+VERSION = "3.9"
 
 # Global stopwords definition - more robust and comprehensive
 DUTCH_STOPWORDS = {

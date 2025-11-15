@@ -1,8 +1,8 @@
-# Radio Transcription Tool v3.7 - Modular Structure
+# Radio Transcription Tool v3.9 - Modular Structure
 
 ## Overview
 
-The Radio Transcription Tool has been refactored into a modular structure for better maintainability, readability, and scalability. The original monolithic file has been split into focused modules following common programming standards.
+The Radio Transcription Tool has been refactored into a modular structure for better maintainability, readability, and scalability. The original monolithic file has been split into focused modules following common programming standards. Version 3.9 continues to build upon the modular architecture with improved stability and optimizations.
 
 ## Module Structure
 
@@ -122,13 +122,13 @@ results = transcribe_audio_file("audio.mp3")
 
 ```bash
 # Build with PyInstaller
-pyinstaller Radio_transcription_tool_Bluvia_v3.7_Optimized.spec
+pyinstaller Radio_transcription_tool_Bluvia_v3.9_Optimized.spec
 ```
 
 ## File Organization
 
 ```
-Radio_transcription_tool v2.0/
+Radio_transcription_tool v3.9/
 ├── main.py                    # Main entry point
 ├── app.py                     # Application coordination
 ├── config.py                  # Configuration and constants
@@ -138,14 +138,15 @@ Radio_transcription_tool v2.0/
 ├── audio_processing.py        # Audio processing
 ├── transcription.py           # Transcription logic
 ├── phrase_filtering.py        # Phrase filtering
-├── requirements_modular.txt   # Dependencies
-├── README_MODULAR.md          # This file
+├── requirements.txt           # Dependencies
+├── README.md                  # This file
+├── Radio_transcription_tool_Bluvia_v3.9_Optimized.spec  # PyInstaller spec
 └── ... (other files)
 ```
 
 ## Dependencies
 
-See `requirements_modular.txt` for the complete list of dependencies.
+See `requirements.txt` for the complete list of dependencies.
 
 ### Core Dependencies
 - `openai` - OpenAI API integration
@@ -203,7 +204,7 @@ The modular structure maintains full compatibility with the original functionali
 If you encounter import errors:
 
 1. **Check module paths** - Ensure all modules are in the same directory
-2. **Verify dependencies** - Install required packages from `requirements_modular.txt`
+2. **Verify dependencies** - Install required packages from `requirements.txt`
 3. **Check Python path** - Ensure the project directory is in your Python path
 
 ### Missing Dependencies
@@ -211,7 +212,7 @@ If you encounter import errors:
 Install missing dependencies:
 
 ```bash
-pip install -r requirements_modular.txt
+pip install -r requirements.txt
 ```
 
 ### Module Not Found

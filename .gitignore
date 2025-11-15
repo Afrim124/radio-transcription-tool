@@ -67,6 +67,10 @@ logs/
 *.bak
 *.backup
 
+# Old versions directory
+Old versions/
+Old versions\
+
 # Test files
 test_*.py
 *_test.py
