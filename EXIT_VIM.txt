@@ -1,0 +1,24 @@
+========================================
+How to Exit VIM Editor
+========================================
+
+You're in VIM because Git opened it for a merge commit message.
+
+To exit VIM:
+
+1. Press the ESC key (to make sure you're in command mode)
+
+2. Then type one of these:
+   - :wq    (save and quit - use this if you want to accept the merge)
+   - :q     (quit without saving - if you haven't changed anything)
+   - :q!    (force quit without saving - discards any changes)
+
+3. Press ENTER
+
+Most likely you just need to:
+   Press ESC, then type :wq and press ENTER
+
+This will complete the merge and you can continue with your git commands.
+
+========================================
+
